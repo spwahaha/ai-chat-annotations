@@ -1,0 +1,38 @@
+{
+  "name": "ai-chat-annotations",
+  "version": "0.1.0",
+  "description": "Select and annotate multiple AI response passages, then include them with your next question.",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spwahaha/ai-chat-annotations.git"
+  },
+  "bugs": {
+    "url": "https://github.com/spwahaha/ai-chat-annotations/issues"
+  },
+  "homepage": "https://github.com/spwahaha/ai-chat-annotations#readme",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "vite build && node scripts/prepare-dist.mjs",
+    "assets:store": "node scripts/render-store-assets.mjs",
+    "validate:release": "node scripts/validate-release.mjs",
+    "package": "npm run build && npm run validate:release && node scripts/package-release.mjs",
+    "release:check": "npm run check && npm run test:e2e && npm run assets:store && npm run package",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "npm run build && playwright test",
+    "check": "tsc --noEmit && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/chrome": "^0.1.1",
+    "jsdom": "^27.0.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5",
+    "vitest": "^5.0.1"
+  }
+}

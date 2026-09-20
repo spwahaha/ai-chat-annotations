@@ -1,0 +1,5 @@
+::highlight(mrq-pending-reference) {
+  background-color: rgba(93, 145, 255, 0.34);
+  color: inherit;
+  text-decoration: underline 2px rgba(72, 120, 224, 0.75);
+}
