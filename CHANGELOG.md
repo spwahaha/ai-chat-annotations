@@ -2,6 +2,13 @@
 
 All notable changes to AI Chat Annotations are documented here.
 
+## 0.1.1 — 2026-10-03
+
+- Restore ChatGPT compatibility with its current `data-message-role` transcript markup.
+- Support the current `mobile-composer-prompt` textarea and `data-composer-submit` Send control.
+- Recognize signed-out `/uc/` conversation routes while retaining the legacy ChatGPT interface fallback.
+- Add regression coverage for both current and legacy ChatGPT DOM contracts.
+
 ## 0.1.0 — 2026-09-20
 
 Initial public release.

@@ -39,6 +39,36 @@ describe('provider adapters', () => {
     expect(adapter.readComposerText()).toBe(payload.trimStart());
   });
 
+  it('supports the current ChatGPT transcript and mobile composer contract', () => {
+    document.body.innerHTML = `
+      <ol data-conversation-transcript>
+        <li data-message-role="assistant" id="current-chat-message">
+          <h4 data-message-attribution>ChatGPT said:</h4>
+          <div data-assistant-markdown>Alpha current selected phrase omega</div>
+        </li>
+      </ol>
+      <form data-mobile-composer>
+        <div data-composer-editor-host>
+          <textarea id="mobile-composer-prompt" name="prompt" data-mobile-composer-prompt>My current question</textarea>
+        </div>
+        <button type="submit" data-composer-submit aria-label="Send message">Send</button>
+      </form>
+    `;
+    window.history.replaceState({}, '', '/uc/current-conversation-id');
+    const adapter = new ChatGPTAdapter();
+    const response = document.querySelector<HTMLElement>('[data-message-role="assistant"]')!;
+    selectText(response.querySelector<HTMLElement>('[data-assistant-markdown]')!, 'current selected phrase');
+
+    const captured = adapter.getSelectedReference(window.getSelection()!);
+    expect(captured?.text).toBe('current selected phrase');
+    expect(captured?.sourceMessageId).toBe('current-chat-message');
+    expect(adapter.getConversationId()).toBe('current-conversation-id');
+    expect(adapter.getResponseElements()).toEqual([response]);
+    expect(adapter.appendToComposer('\n\nReferences')).toBe(true);
+    expect(adapter.readComposerText()).toBe('My current question\n\nReferences');
+    expect(adapter.locateComposer()?.sendButton?.hasAttribute('data-composer-submit')).toBe(true);
+  });
+
   it('captures a Gemini model response and locates the rich composer', () => {
     document.body.innerHTML = `
       <model-response id="gemini-response">Gemini selected passage here</model-response>

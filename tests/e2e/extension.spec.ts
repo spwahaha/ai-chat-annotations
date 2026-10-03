@@ -6,6 +6,7 @@ type ProviderFixture = {
   url: string;
   responseSelector: string;
   composerSelector: string;
+  submitSelector?: string;
   html: string;
   submit: 'button' | 'enter';
 };
@@ -17,11 +18,12 @@ const sharedStyles = `
   textarea, [contenteditable] { border: 1px solid #999; display: block; min-height: 70px; padding: 8px; width: 620px; }
 `;
 
-const fixtures: Record<'chatgpt' | 'gemini', ProviderFixture> = {
-  chatgpt: {
+const fixtures: Record<'chatgptLegacy' | 'chatgpt' | 'gemini', ProviderFixture> = {
+  chatgptLegacy: {
     url: 'https://chatgpt.com/c/e2e-conversation',
     responseSelector: '[data-message-author-role="assistant"]',
     composerSelector: '#prompt-textarea',
+    submitSelector: '[data-testid="send-button"]',
     submit: 'button',
     html: `<!doctype html><style>${sharedStyles}</style>
       <article><div data-message-author-role="assistant" data-message-id="c1">Alpha first selected passage omega.</div></article>
@@ -34,6 +36,33 @@ const fixtures: Record<'chatgpt' | 'gemini', ProviderFixture> = {
         window.sentMessages = [];
         document.querySelector('[data-testid="send-button"]').addEventListener('click', () => {
           const composer = document.querySelector('#prompt-textarea');
+          window.sentMessages.push(composer.value);
+          composer.value = '';
+          composer.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+      </script>`,
+  },
+  chatgpt: {
+    url: 'https://chatgpt.com/uc/e2e-current-conversation',
+    responseSelector: '[data-message-role="assistant"]',
+    composerSelector: '#mobile-composer-prompt',
+    submitSelector: '[data-composer-submit]',
+    submit: 'button',
+    html: `<!doctype html><style>${sharedStyles}</style>
+      <ol data-conversation-transcript>
+        <li data-message-role="assistant" id="current-c1"><div data-assistant-markdown>Alpha first selected passage omega.</div></li>
+        <li data-message-role="assistant" id="current-c2"><div data-assistant-markdown>Beta second selected passage gamma.</div></li>
+      </ol>
+      <form data-mobile-composer>
+        <div data-composer-editor-host>
+          <textarea id="mobile-composer-prompt" name="prompt" data-mobile-composer-prompt>Compare the passages</textarea>
+        </div>
+        <button type="button" data-composer-submit aria-label="Send message">Send</button>
+      </form>
+      <script>
+        window.sentMessages = [];
+        document.querySelector('[data-composer-submit]').addEventListener('click', () => {
+          const composer = document.querySelector('#mobile-composer-prompt');
           window.sentMessages.push(composer.value);
           composer.value = '';
           composer.dispatchEvent(new Event('input', { bubbles: true }));
@@ -118,6 +147,8 @@ for (const [provider, fixture] of Object.entries(fixtures)) {
       await expect(shelf.getByRole('button', { name: 'Open reference 1' })).toBeVisible();
       await expect(shelf.getByRole('button', { name: 'Open reference 2' })).toBeVisible();
       await expect(shelf.getByRole('region')).toHaveCount(0);
+      await responses.nth(0).scrollIntoViewIfNeeded();
+      await expect(shelf.getByRole('button', { name: 'Open reference 1' })).toBeVisible();
       const firstPhraseRect = await responses.nth(0).evaluate((element) => {
         const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
         let node: Node | null = walker.nextNode();
@@ -139,7 +170,7 @@ for (const [provider, fixture] of Object.entries(fixtures)) {
       await page.locator(fixture.composerSelector).click();
       await expect(shelf.getByRole('region')).toHaveCount(0);
       if (fixture.submit === 'button') {
-        await page.getByRole('button', { name: 'Send', exact: true }).click();
+        await page.locator(fixture.submitSelector!).click();
       } else {
         await page.locator(fixture.composerSelector).press('Enter');
       }

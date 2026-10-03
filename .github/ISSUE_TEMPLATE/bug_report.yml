@@ -17,7 +17,7 @@ body:
     id: versions
     attributes:
       label: Extension and Chrome versions
-      placeholder: Extension 0.1.0; Chrome 153
+      placeholder: Extension 0.1.1; Chrome 153
     validations:
       required: true
   - type: textarea
