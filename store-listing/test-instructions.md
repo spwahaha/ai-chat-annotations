@@ -28,4 +28,4 @@ No extension account, API key, payment, or special credentials are required. A r
 - The extension has no toolbar popup or account flow.
 - It runs only on the three domains declared in the manifest.
 - It creates no developer-originated network requests.
-- Pending selections are lost on a full page reload because version 0.1.1 uses in-memory state only.
+- Pending selections are lost on a full page reload because version 0.1.2 uses in-memory state only.

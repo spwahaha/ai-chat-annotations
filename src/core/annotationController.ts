@@ -12,6 +12,7 @@ export class AnnotationController {
   private readonly shelf: ReferenceShelf;
   private allowNextSubmit = false;
   private preparing = false;
+  private selectionRevision = 0;
   private routeTimer: number | null = null;
   private refreshTimer: number | null = null;
   private observer: MutationObserver | null = null;
@@ -87,41 +88,38 @@ export class AnnotationController {
 
   private readonly onSelectionEnd = (event: Event): void => {
     if (this.selectionAction.contains(event.target as Node | null)) return;
+    const revision = ++this.selectionRevision;
+    if (this.showSelectionAction()) return;
     window.setTimeout(() => {
-      const selection = window.getSelection();
-      if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
-        this.selectionAction.hide();
-        return;
-      }
-      const reference = this.adapter.getSelectedReference(selection);
-      if (!reference) {
-        this.selectionAction.hide();
-        return;
-      }
-      const rect = selection.getRangeAt(0).getBoundingClientRect();
-      this.selectionAction.show(rect, this.store.getAll().length, () => {
-        const currentSelection = window.getSelection();
-        const selected = currentSelection ? this.adapter.getSelectedReference(currentSelection) : null;
-        if (!selected) {
-          this.shelf.setStatus('Select the passage again, then choose “Add to question”.', true);
-          this.selectionAction.hide();
-          return;
-        }
-        const added = this.store.add(selected);
-        if (!added) {
-          this.shelf.setStatus('That passage is already included, or the 20-reference limit was reached.', true);
-        } else {
-          this.shelf.setStatus('');
-          this.shelf.open(selected.id);
-        }
-        currentSelection?.removeAllRanges();
-        this.selectionAction.hide();
-      });
+      if (revision !== this.selectionRevision) return;
+      if (!this.showSelectionAction()) this.selectionAction.hide();
     }, 0);
   };
 
+  private showSelectionAction(): boolean {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return false;
+    const reference = this.adapter.getSelectedReference(selection);
+    if (!reference) return false;
+    const rect = selection.getRangeAt(0).getBoundingClientRect();
+    this.selectionAction.show(rect, this.store.getAll().length, () => {
+      const added = this.store.add(reference);
+      if (!added) {
+        this.shelf.setStatus('That passage is already included, or the 20-reference limit was reached.', true);
+      } else {
+        this.shelf.setStatus('');
+        this.shelf.open(reference.id);
+      }
+      window.getSelection()?.removeAllRanges();
+      this.selectionAction.hide();
+    });
+    return true;
+  }
+
   private readonly onDocumentMouseDown = (event: MouseEvent): void => {
-    if (!this.selectionAction.contains(event.target as Node | null)) this.selectionAction.hide();
+    if (this.selectionAction.contains(event.target as Node | null)) return;
+    this.selectionRevision += 1;
+    this.selectionAction.hide();
   };
 
   private readonly onClickCapture = (event: MouseEvent): void => {

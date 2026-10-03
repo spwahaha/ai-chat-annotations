@@ -61,6 +61,18 @@ const fixtures: Record<'chatgptLegacy' | 'chatgpt' | 'gemini', ProviderFixture> 
       </form>
       <script>
         window.sentMessages = [];
+        document.querySelectorAll('[data-message-role="assistant"]').forEach((response) => {
+          response.addEventListener('mouseup', () => {
+            window.getSelection().removeAllRanges();
+            const nativeAction = document.createElement('button');
+            nativeAction.id = 'native-ask-chatgpt';
+            nativeAction.textContent = 'Ask ChatGPT';
+            nativeAction.style.position = 'fixed';
+            nativeAction.style.top = '8px';
+            nativeAction.style.right = '8px';
+            document.body.appendChild(nativeAction);
+          });
+        });
         document.querySelector('[data-composer-submit]').addEventListener('click', () => {
           const composer = document.querySelector('#mobile-composer-prompt');
           window.sentMessages.push(composer.value);

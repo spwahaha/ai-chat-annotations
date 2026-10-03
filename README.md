@@ -66,8 +66,8 @@ npm run release:check
 
 This runs the complete verification suite, renders the Chrome Web Store promotional assets, validates the manifest and icons, and produces:
 
-- `release/ai-chat-annotations-0.1.1.zip`
-- `release/ai-chat-annotations-0.1.1.zip.sha256`
+- `release/ai-chat-annotations-0.1.2.zip`
+- `release/ai-chat-annotations-0.1.2.zip.sha256`
 
 The Store submission copy, privacy answers, reviewer instructions, asset map, and manual checklist are under [`store-listing`](store-listing).
 

@@ -6,7 +6,7 @@
 - [ ] `npx playwright install chromium`
 - [ ] `npm run release:check`
 - [ ] `npm audit` reports no known vulnerabilities
-- [ ] `unzip -t release/ai-chat-annotations-0.1.1.zip` passes
+- [ ] `unzip -t release/ai-chat-annotations-0.1.2.zip` passes
 - [ ] ZIP root contains `manifest.json`, `content.js`, and `icons/` only
 
 ## Manual browser gate
@@ -25,7 +25,7 @@
 - [ ] Push `main`
 - [ ] Confirm CI passes
 - [ ] Confirm the privacy, support, and homepage URLs resolve publicly
-- [ ] Tag `v0.1.1`
+- [ ] Tag `v0.1.2`
 - [ ] Confirm the GitHub release contains the ZIP and SHA-256 file
 
 ## Chrome Web Store gate

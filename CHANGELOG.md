@@ -2,6 +2,13 @@
 
 All notable changes to AI Chat Annotations are documented here.
 
+## 0.1.2 — 2026-10-03
+
+- Capture selected passages synchronously before ChatGPT's native “Ask ChatGPT” action can clear the browser selection.
+- Retain the captured passage through the extension action instead of reading the selection again on click.
+- Prevent stale keyboard-selection retries from hiding a newer passage action.
+- Add unit and browser regression coverage for the authenticated ChatGPT selection race.
+
 ## 0.1.1 — 2026-10-03
 
 - Restore ChatGPT compatibility with its current `data-message-role` transcript markup.

@@ -4,6 +4,36 @@ import { AnnotationController } from '../src/core/annotationController';
 import { selectText, tick } from './helpers';
 
 describe('AnnotationController', () => {
+  it('keeps the captured passage when ChatGPT clears the browser selection on mouseup', async () => {
+    document.body.innerHTML = `
+      <ol data-conversation-transcript>
+        <li data-message-role="assistant" id="selection-race-message">
+          <div data-assistant-markdown>Alpha passage captured before native popup omega</div>
+        </li>
+      </ol>
+      <form data-mobile-composer>
+        <textarea data-mobile-composer-prompt></textarea>
+        <button data-composer-submit>Send</button>
+      </form>
+    `;
+    window.history.replaceState({}, '', '/c/selection-race-test');
+    const controller = new AnnotationController(new ChatGPTAdapter());
+    controller.start();
+
+    const response = document.querySelector<HTMLElement>('[data-assistant-markdown]')!;
+    response.addEventListener('mouseup', () => window.getSelection()?.removeAllRanges());
+    selectText(response, 'passage captured before native popup');
+    response.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+    await tick();
+
+    const actionHost = document.querySelector<HTMLDivElement>('#mrq-selection-action')!;
+    expect(actionHost.style.display).toBe('block');
+    actionHost.shadowRoot!.querySelector<HTMLButtonElement>('button')!.click();
+    expect(controller.getReferencesForTesting()).toHaveLength(1);
+    expect(controller.getReferencesForTesting()[0].text).toBe('passage captured before native popup');
+    controller.destroy();
+  });
+
   it('collects multiple references with notes and submits them with the normal Send button', async () => {
     document.body.innerHTML = `
       <article><div data-message-author-role="assistant" data-message-id="m1">Alpha first selected passage omega</div></article>
