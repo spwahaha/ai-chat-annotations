@@ -19,7 +19,7 @@ This information can include website content, user-generated content, or persona
 
 Selected passages and notes are kept in memory inside the current browser tab. When the user initiates a normal send action, the extension adds the selected passages and notes to that provider's composer. The provider receives that content as part of the user's message under the provider's own terms and privacy policy.
 
-Pending references are cleared after a successful send and are lost when the page is fully reloaded or closed. AI Chat Annotations does not use persistent browser storage in version 0.1.0.
+Pending references are cleared after a successful send and are lost when the page is fully reloaded or closed. AI Chat Annotations does not use persistent browser storage in version 0.1.1.
 
 ## Collection, sharing, and sale
 
@@ -35,7 +35,7 @@ The extension runs only on these supported sites:
 - `https://chat.openai.com/*`
 - `https://gemini.google.com/*`
 
-Access is used only to detect user selections in AI responses, show the annotation interface, and add references to a user-initiated message. The extension does not read cookies, authentication tokens, unrelated tabs, or browsing history.
+Access is used only to detect user selections in AI responses, show the annotation interface, and add references to a user-initiated message. The extension's narrowly scoped `scripting` permission also activates the packaged content script in a supported tab that was already open when the extension was installed, updated, or reloaded. The extension does not read cookies, authentication tokens, unrelated tabs, or browsing history.
 
 ## Limited Use
 

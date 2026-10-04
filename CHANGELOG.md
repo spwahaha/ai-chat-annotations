@@ -12,6 +12,8 @@ All notable changes to AI Chat Annotations are documented here.
 - Retain the captured passage through the extension action instead of reading the selection again on click.
 - Prevent stale keyboard-selection retries from hiding a newer passage action.
 - Add unit and browser regression coverage for the authenticated ChatGPT selection race.
+- Activate the corrected content script in already-open supported tabs when the extension is installed, updated, or reloaded.
+- Guard content-script startup so automatic reinjection cannot create duplicate annotation controllers.
 
 ## 0.1.0 — 2026-09-20
 

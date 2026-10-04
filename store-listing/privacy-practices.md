@@ -8,7 +8,11 @@ Allow users to select and annotate multiple passages in supported AI chat respon
 
 ## Host permission justification
 
-The content script runs only on ChatGPT and Gemini to detect text the user explicitly selects in AI responses, display source-anchored annotation controls, locate the provider's composer and Send control, and insert the selected references only when the user initiates sending. No other sites are accessed. The extension does not request `activeTab`, `tabs`, `cookies`, `webRequest`, browsing-history, background, or broad all-sites access.
+The content script runs only on ChatGPT and Gemini to detect text the user explicitly selects in AI responses, display source-anchored annotation controls, locate the provider's composer and Send control, and insert the selected references only when the user initiates sending. No other sites are accessed. The extension does not request `activeTab`, `tabs`, `cookies`, `webRequest`, browsing-history, or broad all-sites access.
+
+## Scripting permission justification
+
+The narrowly scoped `scripting` permission lets the extension activate its packaged content script in a supported AI-chat tab that was already open when the extension was installed, updated, or reloaded. It executes only the bundled `content.js` file on the three supported origins below. It is not used to run remote code, arbitrary strings, or scripts on other sites.
 
 Supported match patterns:
 

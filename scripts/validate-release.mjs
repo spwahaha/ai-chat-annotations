@@ -8,8 +8,9 @@ if (manifest.manifest_version !== 3) errors.push('manifest_version must be 3');
 if (manifest.name !== 'AI Chat Annotations') errors.push('manifest name must be AI Chat Annotations');
 if (manifest.version !== packageJson.version) errors.push('manifest and package versions must match');
 if (!manifest.description || manifest.description.length > 132) errors.push('manifest description must be 1–132 characters');
-if (manifest.permissions?.length || manifest.host_permissions?.length) {
-  errors.push('release must not request general extension or host permissions');
+const permissions = manifest.permissions ?? [];
+if (permissions.length !== 1 || permissions[0] !== 'scripting') {
+  errors.push('release must request only the scripting permission');
 }
 
 const expectedMatches = [
@@ -20,6 +21,12 @@ const expectedMatches = [
 const matches = manifest.content_scripts?.[0]?.matches ?? [];
 if (JSON.stringify(matches) !== JSON.stringify(expectedMatches)) {
   errors.push('content-script sites differ from the reviewed release allowlist');
+}
+if (JSON.stringify(manifest.host_permissions ?? []) !== JSON.stringify(expectedMatches)) {
+  errors.push('host permissions differ from the reviewed release allowlist');
+}
+if (manifest.background?.service_worker !== 'background.js') {
+  errors.push('background service worker must be background.js');
 }
 
 function pngDimensions(buffer) {
@@ -40,7 +47,7 @@ for (const size of [16, 32, 48, 128]) {
   }
 }
 
-for (const file of ['dist/manifest.json', 'dist/content.js']) {
+for (const file of ['dist/manifest.json', 'dist/content.js', 'dist/background.js']) {
   try {
     if ((await stat(file)).size === 0) errors.push(`${file} is empty`);
   } catch {

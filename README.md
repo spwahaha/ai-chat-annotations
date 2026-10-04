@@ -29,7 +29,7 @@ Then in Chrome:
 2. Enable **Developer mode**.
 3. Choose **Load unpacked**.
 4. Select the generated `dist` directory in the project root.
-5. Reload any already-open ChatGPT or Gemini tabs.
+5. Reload any already-open ChatGPT or Gemini tabs once after first loading the extension.
 
 ## Supported providers
 
@@ -40,7 +40,7 @@ The core reference store, highlighting, shelf, formatting, and send lifecycle ar
 
 ## Safety and privacy
 
-- The extension asks for no Chrome permissions.
+- The extension requests only Chrome's `scripting` permission on the three supported AI-chat origins. This lets a newly installed or reloaded build activate in tabs that were already open.
 - It makes no network requests and has no analytics.
 - References remain in memory for the current page session and are separated by provider conversation.
 - Text is added to the composer only when the user sends. If insertion or sending fails, the references remain available and a compact status appears.
@@ -68,6 +68,11 @@ This runs the complete verification suite, renders the Chrome Web Store promotio
 
 - `release/ai-chat-annotations-0.1.1.zip`
 - `release/ai-chat-annotations-0.1.1.zip.sha256`
+
+After rebuilding an unpacked copy, click **Reload** on its card in
+`chrome://extensions`. Version 0.1.1 then reinjects the current content script
+into already-open supported tabs. If Chrome reports an extension error, remove
+the unpacked copy and load the repository's `dist` folder again.
 
 The Store submission copy, privacy answers, reviewer instructions, asset map, and manual checklist are under [`store-listing`](store-listing).
 
