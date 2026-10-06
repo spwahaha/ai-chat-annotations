@@ -7,7 +7,17 @@ export class ChatGPTAdapter extends BaseAdapter {
   protected readonly responseSelectors = [
     '[data-message-role="assistant"]',
     '[data-message-author-role="assistant"]',
+    '[data-role="assistant"]',
+    '[data-message-author="assistant"]',
+    '[data-testid="assistant-message"]',
+    '[data-testid="assistant-turn"]',
     'article[data-testid^="conversation-turn"] [data-message-author-role="assistant"]',
+    // Some account-specific ChatGPT variants omit role attributes while
+    // retaining the rendered Markdown response surface. User messages use a
+    // separate bubble, making this the safest structural fallback.
+    'main .markdown',
+    'main [class~="markdown"]',
+    'main [class*="markdown-"]',
   ];
 
   protected readonly composerSelectors = [

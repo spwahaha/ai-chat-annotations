@@ -69,6 +69,31 @@ describe('provider adapters', () => {
     expect(adapter.locateComposer()?.sendButton?.hasAttribute('data-composer-submit')).toBe(true);
   });
 
+  it('supports a rendered ChatGPT Markdown response without role attributes', () => {
+    document.body.innerHTML = `
+      <main>
+        <section>
+          <div class="markdown prose markdown-new-styling">
+            <p id="fallback-response">The resort fee is waived for this redemption.</p>
+          </div>
+        </section>
+      </main>
+      <form>
+        <div id="prompt-textarea" contenteditable="true" role="textbox"></div>
+        <button data-testid="send-button">Send</button>
+      </form>
+    `;
+
+    const adapter = new ChatGPTAdapter();
+    const response = document.querySelector<HTMLElement>('#fallback-response')!;
+    selectText(response, 'resort fee is waived');
+
+    const captured = adapter.getSelectedReference(window.getSelection()!);
+    expect(captured?.text).toBe('resort fee is waived');
+    expect(captured?.sourceElement.classList.contains('markdown')).toBe(true);
+    expect(adapter.getResponseElements()).toHaveLength(1);
+  });
+
   it('captures a Gemini model response and locates the rich composer', () => {
     document.body.innerHTML = `
       <model-response id="gemini-response">Gemini selected passage here</model-response>

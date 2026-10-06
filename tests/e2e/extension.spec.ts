@@ -18,7 +18,7 @@ const sharedStyles = `
   textarea, [contenteditable] { border: 1px solid #999; display: block; min-height: 70px; padding: 8px; width: 620px; }
 `;
 
-const fixtures: Record<'chatgptLegacy' | 'chatgpt' | 'gemini', ProviderFixture> = {
+const fixtures: Record<'chatgptLegacy' | 'chatgpt' | 'chatgptMarkdown' | 'gemini', ProviderFixture> = {
   chatgptLegacy: {
     url: 'https://chatgpt.com/c/e2e-conversation',
     responseSelector: '[data-message-author-role="assistant"]',
@@ -75,6 +75,31 @@ const fixtures: Record<'chatgptLegacy' | 'chatgpt' | 'gemini', ProviderFixture> 
         });
         document.querySelector('[data-composer-submit]').addEventListener('click', () => {
           const composer = document.querySelector('#mobile-composer-prompt');
+          window.sentMessages.push(composer.value);
+          composer.value = '';
+          composer.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+      </script>`,
+  },
+  chatgptMarkdown: {
+    url: 'https://chatgpt.com/',
+    responseSelector: 'main .markdown',
+    composerSelector: '#prompt-textarea',
+    submitSelector: '[data-testid="send-button"]',
+    submit: 'button',
+    html: `<!doctype html><style>${sharedStyles}</style>
+      <main>
+        <section><div class="markdown prose markdown-new-styling">Alpha first selected passage omega.</div></section>
+        <section><div class="markdown prose markdown-new-styling">Beta second selected passage gamma.</div></section>
+      </main>
+      <form>
+        <textarea id="prompt-textarea">Compare the passages</textarea>
+        <button type="button" data-testid="send-button">Send</button>
+      </form>
+      <script>
+        window.sentMessages = [];
+        document.querySelector('[data-testid="send-button"]').addEventListener('click', () => {
+          const composer = document.querySelector('#prompt-textarea');
           window.sentMessages.push(composer.value);
           composer.value = '';
           composer.dispatchEvent(new Event('input', { bubbles: true }));

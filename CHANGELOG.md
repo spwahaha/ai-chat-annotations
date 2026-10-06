@@ -14,6 +14,7 @@ All notable changes to AI Chat Annotations are documented here.
 - Add unit and browser regression coverage for the authenticated ChatGPT selection race.
 - Activate the corrected content script in already-open supported tabs when the extension is installed, updated, or reloaded.
 - Guard content-script startup so automatic reinjection cannot create duplicate annotation controllers.
+- Detect ChatGPT responses through rendered Markdown containers when account-specific UI variants omit message-role attributes.
 
 ## 0.1.0 — 2026-09-20
 
