@@ -68,6 +68,7 @@ This runs the complete verification suite, renders the Chrome Web Store promotio
 
 - `release/ai-chat-annotations-0.1.1.zip`
 - `release/ai-chat-annotations-0.1.1.zip.sha256`
+- `release/ai-chat-annotations-0.1.1/` (unpacked local-test build)
 
 After rebuilding an unpacked copy, click **Reload** on its card in
 `chrome://extensions`. Version 0.1.1 then reinjects the current content script

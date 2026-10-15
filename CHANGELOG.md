@@ -16,6 +16,8 @@ All notable changes to AI Chat Annotations are documented here.
 - Guard content-script startup so automatic reinjection cannot create duplicate annotation controllers.
 - Detect ChatGPT responses through rendered Markdown containers when account-specific UI variants omit message-role attributes.
 - Capture from ChatGPT's native selection-action popover when its response wrapper has no stable role or Markdown attributes.
+- Follow ChatGPT's delayed native selection action for up to 1.5 seconds and detect its current popover/role-button variants, including attribute-only UI activation.
+- Keep a versioned unpacked build beside the Chrome Web Store ZIP so a locally loaded release can be rebuilt in place and reloaded reliably.
 
 ## 0.1.0 — 2026-09-20
 

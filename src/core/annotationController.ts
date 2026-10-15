@@ -13,6 +13,7 @@ export class AnnotationController {
   private allowNextSubmit = false;
   private preparing = false;
   private selectionRevision = 0;
+  private selectionRetryTimer: number | null = null;
   private routeTimer: number | null = null;
   private refreshTimer: number | null = null;
   private observer: MutationObserver | null = null;
@@ -38,11 +39,16 @@ export class AnnotationController {
     window.addEventListener('resize', this.onViewportChange);
     window.addEventListener('scroll', this.onViewportChange, true);
 
-    this.observer = new MutationObserver(() => {
-      this.scheduleRefresh();
+    this.observer = new MutationObserver((records) => {
+      if (records.some((record) => record.type === 'childList')) this.scheduleRefresh();
       this.retrySelectionAfterProviderMutation();
     });
-    this.observer.observe(document.body, { childList: true, subtree: true });
+    this.observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['popover', 'style', 'class', 'hidden', 'aria-hidden', 'data-state', 'open'],
+    });
     this.routeTimer = window.setInterval(() => this.checkRoute(), 750);
   }
 
@@ -51,6 +57,7 @@ export class AnnotationController {
     this.observer?.disconnect();
     if (this.routeTimer !== null) window.clearInterval(this.routeTimer);
     if (this.refreshTimer !== null) window.clearTimeout(this.refreshTimer);
+    this.stopSelectionRetry();
     document.removeEventListener('mouseup', this.onSelectionEnd, true);
     document.removeEventListener('keyup', this.onSelectionEnd, true);
     document.removeEventListener('mousedown', this.onDocumentMouseDown, true);
@@ -90,21 +97,48 @@ export class AnnotationController {
   };
 
   private retrySelectionAfterProviderMutation(): void {
-    if (this.selectionAction.isVisible()) return;
+    if (this.selectionAction.isVisible()) {
+      this.stopSelectionRetry();
+      return;
+    }
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
-    this.showSelectionAction();
+    if (this.showSelectionAction()) this.stopSelectionRetry();
   }
 
   private readonly onSelectionEnd = (event: Event): void => {
     if (this.selectionAction.contains(event.target as Node | null)) return;
     const revision = ++this.selectionRevision;
+    this.stopSelectionRetry();
     if (this.showSelectionAction()) return;
-    window.setTimeout(() => {
-      if (revision !== this.selectionRevision) return;
-      if (!this.showSelectionAction()) this.selectionAction.hide();
-    }, 0);
+    this.startSelectionRetry(revision);
   };
+
+  private startSelectionRetry(revision: number): void {
+    const deadline = Date.now() + 1_500;
+    const retry = (): void => {
+      this.selectionRetryTimer = null;
+      if (revision !== this.selectionRevision || this.selectionAction.isVisible()) return;
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
+        this.selectionAction.hide();
+        return;
+      }
+      if (this.showSelectionAction()) return;
+      if (Date.now() >= deadline) {
+        this.selectionAction.hide();
+        return;
+      }
+      this.selectionRetryTimer = window.setTimeout(retry, 50);
+    };
+    this.selectionRetryTimer = window.setTimeout(retry, 50);
+  }
+
+  private stopSelectionRetry(): void {
+    if (this.selectionRetryTimer === null) return;
+    window.clearTimeout(this.selectionRetryTimer);
+    this.selectionRetryTimer = null;
+  }
 
   private showSelectionAction(): boolean {
     const selection = window.getSelection();
@@ -129,6 +163,7 @@ export class AnnotationController {
   private readonly onDocumentMouseDown = (event: MouseEvent): void => {
     if (this.selectionAction.contains(event.target as Node | null)) return;
     this.selectionRevision += 1;
+    this.stopSelectionRetry();
     this.selectionAction.hide();
   };
 

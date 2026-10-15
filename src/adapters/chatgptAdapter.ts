@@ -69,11 +69,14 @@ export class ChatGPTAdapter extends BaseAdapter {
 
   private hasNativeSelectionAction(): boolean {
     if (document.querySelector(
-      '[popover="manual"][style*="--targeted-action-selection"], [data-selection-tooltip="true"]',
+      '[popover][style*="targeted-action-selection"], [data-selection-tooltip="true"]',
     )) return true;
 
-    return [...document.querySelectorAll<HTMLButtonElement>('button.btn-secondary')]
-      .some((button) => button.textContent?.includes('Ask ChatGPT'));
+    // The native action has changed classes several times and some variants
+    // render it as a role=button element. Its label is the stable, visible
+    // contract and is only consulted while the browser has a live selection.
+    return [...document.querySelectorAll<HTMLElement>('button, [role="button"]')]
+      .some((button) => button.textContent?.replace(/\s+/g, ' ').trim().toLowerCase() === 'ask chatgpt');
   }
 
   matchesPage(url: URL): boolean {

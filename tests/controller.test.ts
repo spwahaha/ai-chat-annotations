@@ -34,6 +34,37 @@ describe('AnnotationController', () => {
     controller.destroy();
   });
 
+  it('waits for ChatGPT to activate a pre-rendered native selection action', async () => {
+    document.body.innerHTML = `
+      <main><div id="unknown-delayed-response">Alpha delayed native action omega</div></main>
+      <div id="native-action"><span role="button">Start writing</span></div>
+      <form><textarea id="prompt-textarea"></textarea><button data-testid="send-button">Send</button></form>
+    `;
+    const controller = new AnnotationController(new ChatGPTAdapter());
+    controller.start();
+
+    const response = document.querySelector<HTMLElement>('#unknown-delayed-response')!;
+    selectText(response, 'delayed native action');
+    response.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+    await tick();
+
+    const actionHost = document.querySelector<HTMLDivElement>('#mrq-selection-action')!;
+    expect(actionHost.style.display).toBe('none');
+
+    await tick(100);
+    const nativeAction = document.querySelector<HTMLElement>('#native-action')!;
+    nativeAction.setAttribute('popover', 'manual');
+    nativeAction.style.setProperty('position-anchor', '--targeted-action-selection');
+    nativeAction.querySelector<HTMLElement>('[role="button"]')!.textContent = 'Ask ChatGPT';
+    await tick(100);
+
+    expect(actionHost.style.display).toBe('block');
+    actionHost.shadowRoot!.querySelector<HTMLButtonElement>('button')!.click();
+    expect(controller.getReferencesForTesting()).toHaveLength(1);
+    expect(controller.getReferencesForTesting()[0].text).toBe('delayed native action');
+    controller.destroy();
+  });
+
   it('keeps the captured passage when ChatGPT clears the browser selection on mouseup', async () => {
     document.body.innerHTML = `
       <ol data-conversation-transcript>

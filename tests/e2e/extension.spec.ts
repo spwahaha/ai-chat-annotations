@@ -123,15 +123,17 @@ const fixtures: Record<'chatgptLegacy' | 'chatgpt' | 'chatgptMarkdown' | 'chatgp
       </form>
       <script>
         window.sentMessages = [];
+        const nativeAction = document.createElement('div');
+        nativeAction.dataset.nativeSelectionAction = 'true';
+        nativeAction.innerHTML = '<span role="button">Start writing</span>';
+        document.body.appendChild(nativeAction);
         document.querySelectorAll('.unknown-response-boundary').forEach((response) => {
           response.addEventListener('mouseup', () => {
-            document.querySelector('[data-native-selection-action]')?.remove();
-            const nativeAction = document.createElement('div');
-            nativeAction.dataset.nativeSelectionAction = 'true';
-            nativeAction.setAttribute('popover', 'manual');
-            nativeAction.style.setProperty('--targeted-action-selection', '1');
-            nativeAction.innerHTML = '<button class="btn-secondary">Ask ChatGPT</button>';
-            document.body.appendChild(nativeAction);
+            setTimeout(() => {
+              nativeAction.setAttribute('popover', 'manual');
+              nativeAction.style.setProperty('position-anchor', '--targeted-action-selection');
+              nativeAction.querySelector('[role="button"]').textContent = 'Ask ChatGPT';
+            }, 120);
           });
         });
         document.querySelector('[data-testid="send-button"]').addEventListener('click', () => {
