@@ -1,4 +1,10 @@
 import { BaseAdapter } from './baseAdapter';
+import type { SelectedReference } from '../types';
+
+function elementForNode(node: Node | null): HTMLElement | null {
+  if (!node) return null;
+  return node instanceof HTMLElement ? node : node.parentElement;
+}
 
 export class ChatGPTAdapter extends BaseAdapter {
   readonly id = 'chatgpt' as const;
@@ -35,6 +41,40 @@ export class ChatGPTAdapter extends BaseAdapter {
     'button[aria-label="Send prompt"]',
     'button[aria-label*="Send"]',
   ];
+
+  getSelectedReference(selection: Selection): SelectedReference | null {
+    const strictMatch = super.getSelectedReference(selection);
+    if (strictMatch) return strictMatch;
+    if (!this.hasNativeSelectionAction() || selection.isCollapsed || selection.rangeCount === 0) return null;
+
+    const range = selection.getRangeAt(0);
+    const commonNode = range.commonAncestorContainer;
+    const commonElement = elementForNode(commonNode);
+    if (!commonElement) return null;
+    if (commonElement.closest('form, #prompt-textarea, [data-composer-editor-host]')) return null;
+
+    const sourceElement = commonElement.closest<HTMLElement>(
+      'p, li, pre, blockquote, h1, h2, h3, h4, h5, h6, [data-message-id], main',
+    );
+    if (!sourceElement) return null;
+
+    const anchorElement = elementForNode(selection.anchorNode);
+    const focusElement = elementForNode(selection.focusNode);
+    if (!anchorElement || !focusElement || !sourceElement.contains(anchorElement) || !sourceElement.contains(focusElement)) {
+      return null;
+    }
+
+    return this.createSelectedReference(selection, sourceElement);
+  }
+
+  private hasNativeSelectionAction(): boolean {
+    if (document.querySelector(
+      '[popover="manual"][style*="--targeted-action-selection"], [data-selection-tooltip="true"]',
+    )) return true;
+
+    return [...document.querySelectorAll<HTMLButtonElement>('button.btn-secondary')]
+      .some((button) => button.textContent?.includes('Ask ChatGPT'));
+  }
 
   matchesPage(url: URL): boolean {
     return url.hostname === 'chatgpt.com' || url.hostname === 'chat.openai.com';

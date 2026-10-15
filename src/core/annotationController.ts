@@ -38,7 +38,10 @@ export class AnnotationController {
     window.addEventListener('resize', this.onViewportChange);
     window.addEventListener('scroll', this.onViewportChange, true);
 
-    this.observer = new MutationObserver(() => this.scheduleRefresh());
+    this.observer = new MutationObserver(() => {
+      this.scheduleRefresh();
+      this.retrySelectionAfterProviderMutation();
+    });
     this.observer.observe(document.body, { childList: true, subtree: true });
     this.routeTimer = window.setInterval(() => this.checkRoute(), 750);
   }
@@ -85,6 +88,13 @@ export class AnnotationController {
   private readonly onViewportChange = (): void => {
     this.shelf.position();
   };
+
+  private retrySelectionAfterProviderMutation(): void {
+    if (this.selectionAction.isVisible()) return;
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
+    this.showSelectionAction();
+  }
 
   private readonly onSelectionEnd = (event: Event): void => {
     if (this.selectionAction.contains(event.target as Node | null)) return;

@@ -4,6 +4,36 @@ import { AnnotationController } from '../src/core/annotationController';
 import { selectText, tick } from './helpers';
 
 describe('AnnotationController', () => {
+  it('captures after ChatGPT adds its native selection action for an unknown response wrapper', async () => {
+    document.body.innerHTML = `
+      <main><div id="unknown-response">Alpha captured from native action omega</div></main>
+      <form><textarea id="prompt-textarea"></textarea><button data-testid="send-button">Send</button></form>
+    `;
+    const controller = new AnnotationController(new ChatGPTAdapter());
+    controller.start();
+
+    const response = document.querySelector<HTMLElement>('#unknown-response')!;
+    selectText(response, 'captured from native action');
+    response.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+    await tick();
+
+    const actionHost = document.querySelector<HTMLDivElement>('#mrq-selection-action')!;
+    expect(actionHost.style.display).toBe('none');
+
+    const nativeAction = document.createElement('div');
+    nativeAction.setAttribute('popover', 'manual');
+    nativeAction.style.setProperty('--targeted-action-selection', '1');
+    nativeAction.innerHTML = '<button class="btn-secondary">Ask ChatGPT</button>';
+    document.body.appendChild(nativeAction);
+    await tick();
+
+    expect(actionHost.style.display).toBe('block');
+    actionHost.shadowRoot!.querySelector<HTMLButtonElement>('button')!.click();
+    expect(controller.getReferencesForTesting()).toHaveLength(1);
+    expect(controller.getReferencesForTesting()[0].text).toBe('captured from native action');
+    controller.destroy();
+  });
+
   it('keeps the captured passage when ChatGPT clears the browser selection on mouseup', async () => {
     document.body.innerHTML = `
       <ol data-conversation-transcript>

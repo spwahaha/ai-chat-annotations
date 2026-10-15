@@ -71,6 +71,15 @@ export abstract class BaseAdapter implements ProviderAdapter {
     const focusElement = this.findResponseForNode(selection.focusNode);
     if (!sourceElement || sourceElement !== focusElement) return null;
 
+    return this.createSelectedReference(selection, sourceElement);
+  }
+
+  protected createSelectedReference(
+    selection: Selection,
+    sourceElement: HTMLElement,
+  ): SelectedReference | null {
+    if (selection.isCollapsed || selection.rangeCount === 0) return null;
+
     const text = normalizeSelectionText(selection.toString());
     if (text.length < 2 || text.length > 4_000) return null;
 

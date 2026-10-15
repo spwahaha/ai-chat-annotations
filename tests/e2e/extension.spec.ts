@@ -18,7 +18,7 @@ const sharedStyles = `
   textarea, [contenteditable] { border: 1px solid #999; display: block; min-height: 70px; padding: 8px; width: 620px; }
 `;
 
-const fixtures: Record<'chatgptLegacy' | 'chatgpt' | 'chatgptMarkdown' | 'gemini', ProviderFixture> = {
+const fixtures: Record<'chatgptLegacy' | 'chatgpt' | 'chatgptMarkdown' | 'chatgptNativeAction' | 'gemini', ProviderFixture> = {
   chatgptLegacy: {
     url: 'https://chatgpt.com/c/e2e-conversation',
     responseSelector: '[data-message-author-role="assistant"]',
@@ -98,6 +98,42 @@ const fixtures: Record<'chatgptLegacy' | 'chatgpt' | 'chatgptMarkdown' | 'gemini
       </form>
       <script>
         window.sentMessages = [];
+        document.querySelector('[data-testid="send-button"]').addEventListener('click', () => {
+          const composer = document.querySelector('#prompt-textarea');
+          window.sentMessages.push(composer.value);
+          composer.value = '';
+          composer.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+      </script>`,
+  },
+  chatgptNativeAction: {
+    url: 'https://chatgpt.com/',
+    responseSelector: 'main .unknown-response-boundary',
+    composerSelector: '#prompt-textarea',
+    submitSelector: '[data-testid="send-button"]',
+    submit: 'button',
+    html: `<!doctype html><style>${sharedStyles}</style>
+      <main>
+        <section><div class="unknown-response-boundary">Alpha first selected passage omega.</div></section>
+        <section><div class="unknown-response-boundary">Beta second selected passage gamma.</div></section>
+      </main>
+      <form>
+        <textarea id="prompt-textarea">Compare the passages</textarea>
+        <button type="button" data-testid="send-button">Send</button>
+      </form>
+      <script>
+        window.sentMessages = [];
+        document.querySelectorAll('.unknown-response-boundary').forEach((response) => {
+          response.addEventListener('mouseup', () => {
+            document.querySelector('[data-native-selection-action]')?.remove();
+            const nativeAction = document.createElement('div');
+            nativeAction.dataset.nativeSelectionAction = 'true';
+            nativeAction.setAttribute('popover', 'manual');
+            nativeAction.style.setProperty('--targeted-action-selection', '1');
+            nativeAction.innerHTML = '<button class="btn-secondary">Ask ChatGPT</button>';
+            document.body.appendChild(nativeAction);
+          });
+        });
         document.querySelector('[data-testid="send-button"]').addEventListener('click', () => {
           const composer = document.querySelector('#prompt-textarea');
           window.sentMessages.push(composer.value);

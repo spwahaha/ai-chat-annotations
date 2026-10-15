@@ -50,6 +50,10 @@ export class SelectionAction {
     return Boolean(target && (this.host === target || this.host.contains(target)));
   }
 
+  isVisible(): boolean {
+    return this.host.style.display !== 'none';
+  }
+
   show(rect: DOMRect, count: number, callback: () => void): void {
     this.callback = callback;
     this.button.replaceChildren(document.createTextNode('＋ Add to question'));

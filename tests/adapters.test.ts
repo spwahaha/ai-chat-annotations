@@ -94,6 +94,30 @@ describe('provider adapters', () => {
     expect(adapter.getResponseElements()).toHaveLength(1);
   });
 
+  it('uses ChatGPT native selection action as the response-boundary fallback', () => {
+    document.body.innerHTML = `
+      <main>
+        <div id="unknown-response-boundary">Alpha native action selected phrase omega</div>
+      </main>
+      <div popover="manual" style="--targeted-action-selection: 1">
+        <button class="btn-secondary">Ask ChatGPT</button>
+      </div>
+      <form><div id="prompt-textarea" contenteditable="true">Composer text</div></form>
+    `;
+
+    const adapter = new ChatGPTAdapter();
+    const response = document.querySelector<HTMLElement>('#unknown-response-boundary')!;
+    selectText(response, 'native action selected phrase');
+
+    const captured = adapter.getSelectedReference(window.getSelection()!);
+    expect(captured?.text).toBe('native action selected phrase');
+    expect(captured?.sourceElement).toBe(document.querySelector('main'));
+
+    const composer = document.querySelector<HTMLElement>('#prompt-textarea')!;
+    selectText(composer, 'Composer text');
+    expect(adapter.getSelectedReference(window.getSelection()!)).toBeNull();
+  });
+
   it('captures a Gemini model response and locates the rich composer', () => {
     document.body.innerHTML = `
       <model-response id="gemini-response">Gemini selected passage here</model-response>

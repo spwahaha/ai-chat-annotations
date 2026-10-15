@@ -15,6 +15,7 @@ All notable changes to AI Chat Annotations are documented here.
 - Activate the corrected content script in already-open supported tabs when the extension is installed, updated, or reloaded.
 - Guard content-script startup so automatic reinjection cannot create duplicate annotation controllers.
 - Detect ChatGPT responses through rendered Markdown containers when account-specific UI variants omit message-role attributes.
+- Capture from ChatGPT's native selection-action popover when its response wrapper has no stable role or Markdown attributes.
 
 ## 0.1.0 — 2026-09-20
 
