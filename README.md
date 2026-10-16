@@ -1,10 +1,25 @@
 # AI Chat Annotations
 
-A local Chrome extension for collecting multiple passages from earlier AI responses and including them in the next question. The same product flow works on ChatGPT and Gemini.
+Ask one precise follow-up about several parts of a ChatGPT or Gemini answer—without repeatedly copying, pasting, or losing context.
+
+[**Install AI Chat Annotations from the Chrome Web Store**](https://chromewebstore.google.com/detail/ai-chat-annotations/ekekngbagjjcipociafmplgehljjniel)
+
+AI Chat Annotations is a free, open-source Chrome extension. Select several passages, attach an optional note or question to each one, and send them together through the AI chat's normal composer. No API key, extension account, analytics, or developer-operated server is involved.
 
 ![Add a selected passage to the next question](assets/store/screenshots/01-add-to-question.png)
 
-## What it does
+## Why use it
+
+Long AI answers often contain several claims, code snippets, or recommendations worth questioning together. Normal follow-ups make you quote them manually or discuss them one at a time. AI Chat Annotations keeps each reference anchored to its source and bundles all of them into one well-structured question.
+
+It is useful for:
+
+- comparing several claims before accepting an answer;
+- reviewing multiple code fragments or implementation choices together;
+- studying a long explanation and attaching a separate question to each passage; and
+- collecting evidence from earlier responses before asking for a synthesis.
+
+## How it works
 
 1. Select text inside an assistant response.
 2. Choose **＋ Add to question**.
@@ -14,7 +29,15 @@ A local Chrome extension for collecting multiple passages from earlier AI respon
 
 There is deliberately no separate “Insert” step. The references are attached to the next normal question automatically.
 
-## Install locally
+![Several passages queued for one follow-up question](assets/store/screenshots/03-multiple-references.png)
+
+## Install
+
+### Chrome Web Store
+
+[Install the public release](https://chromewebstore.google.com/detail/ai-chat-annotations/ekekngbagjjcipociafmplgehljjniel), then reload any ChatGPT or Gemini tabs that were already open.
+
+### Development build
 
 Requires Node.js 20 or newer and a Chromium-based browser.
 
@@ -88,9 +111,12 @@ See [docs/PRODUCT_FLOW.md](docs/PRODUCT_FLOW.md) for the interaction contract an
 
 ## Contributing and support
 
+- [Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-annotations/ekekngbagjjcipociafmplgehljjniel)
 - [Contributing](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
 - [Changelog](CHANGELOG.md)
 - [Issue tracker](https://github.com/spwahaha/ai-chat-annotations/issues)
+
+If the extension saves you time, an honest Chrome Web Store rating helps other people discover it. Bug reports and compatibility reports are equally valuable.
 
 Licensed under the [MIT License](LICENSE).

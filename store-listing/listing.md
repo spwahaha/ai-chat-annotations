@@ -8,7 +8,7 @@ AI Chat Annotations
 
 **Summary**
 
-Select and annotate multiple AI response passages, then include them with your next question.
+Quote and annotate multiple passages in ChatGPT or Gemini, then ask one precise follow-up with all the context attached.
 
 **Category**
 
@@ -20,9 +20,11 @@ English
 
 ## Detailed description
 
-AI Chat Annotations makes follow-up questions precise when an AI response contains several passages you want to discuss.
+Ask one precise follow-up about several parts of a ChatGPT or Gemini answer—without repeatedly copying, pasting, or losing context.
 
-Select text in a ChatGPT or Gemini response and choose “Add to question.” The selected passage stays highlighted with a numbered marker. Add an optional question or instruction, minimize it, and continue selecting other passages. When you use the provider's normal Send button or Enter shortcut, the extension includes all pending references with your message automatically.
+Select text in an AI response and choose “Add to question.” The passage stays highlighted with a numbered marker. Attach an optional question or instruction, then keep reading and collect other passages. When you use the normal Send button or Enter shortcut, the extension includes every pending reference with your message automatically.
+
+This is especially useful when you want to compare several claims, review multiple code fragments, question different parts of a long explanation, or ask for a synthesis grounded in specific earlier passages.
 
 Features:
 
@@ -33,6 +35,7 @@ Features:
 - Send references with or without additional text in the normal composer.
 - Keep separate pending collections for different conversations while the page remains open.
 - Use the same workflow on ChatGPT and Gemini.
+- Work through the provider's normal chat interface—no API key or extension account required.
 
 Privacy by design:
 
@@ -53,7 +56,7 @@ AI Chat Annotations is an independent, unofficial extension. It is not affiliate
 
 **Homepage**
 
-https://github.com/spwahaha/ai-chat-annotations
+https://github.com/spwahaha/ai-chat-annotations#readme
 
 **Support**
 
