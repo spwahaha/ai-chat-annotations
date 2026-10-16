@@ -26,24 +26,25 @@
 
 ## Launch prerequisites
 
-- Upload version 0.1.1 to the Chrome Web Store before directing new users to the listing. The public listing currently reports version 0.1.0, while 0.1.1 contains current ChatGPT compatibility fixes.
+- Version 0.1.1 is published publicly in the Chrome Web Store. Re-test the installed Store build in a clean Chrome profile before each campaign.
 - Replace the live listing copy with `store-listing/listing.md`.
 - Put `01-add-to-question.png` first and `03-multiple-references.png` second; together they explain the action and the multi-reference advantage.
 - Use a dedicated public support email rather than a personal email when the publisher account permits it.
-- Test installation and the core flow in a clean Chrome profile immediately before outreach.
+- Record the current baseline—2 users and no ratings as of October 16, 2026—before outreach.
 
 ## 30-day campaign
 
 ### Days 1–2: repair conversion surfaces
 
-- Publish version 0.1.1 and the revised Store listing.
+- Publish the revised Store listing copy.
 - Confirm the Store page, GitHub homepage, privacy page, and support link all resolve.
 - Ask three trusted users to install it without guidance and report where they hesitate.
 - Collect one short screen recording showing: select passage, add note, collect a second passage, send one follow-up.
 
 ### Days 3–7: feedback-first launch
 
-- Post to one relevant community at a time, beginning with `r/chrome_extensions` or `r/SideProject`.
+- Post the feedback-first draft to `r/chrome_extensions`, where extension projects are on topic.
+- Wait at least 48 hours before considering another launch post; use that time to answer questions and fix friction.
 - Adapt the post to each community instead of cross-posting identical copy on the same day.
 - Ask for workflow feedback, not upvotes or five-star reviews.
 - Reply to every substantive comment and turn recurring friction into GitHub issues.
@@ -54,6 +55,13 @@
 - Share a research/study example in a productivity or learning community only when the example genuinely fits.
 - Launch on Product Hunt after a short demo is available and the listing has survived the first feedback round.
 - Contact 10 small AI-workflow creators or newsletter writers with a personalized, one-paragraph note and a concrete use case from their work.
+
+## Channel rules and sequencing
+
+- **Reddit:** Start with `r/chrome_extensions`. Do not promote in `r/chrome`; its current rules direct extension promotions elsewhere. Avoid `r/productivity` launch posts because its rules prohibit advertising. Use the required self-promotion flair and established-account norms before considering `r/SideProject`.
+- **Show HN:** The extension is usable without a signup or API key, so it fits the [Show HN guidelines](https://news.ycombinator.com/showhn.html). Post only when the maker can stay available to answer technical and product questions. Never ask anyone to upvote it.
+- **Product Hunt:** Wait until a short demo exists. The [Product Hunt launch guide](https://help.producthunt.com/en/articles/17350772-launch-guide) calls for a personal maker account, a tagline of at most 60 characters, a description of at most 260 characters, strong images or GIFs, and a genuine maker comment. Do not ask for upvotes.
+- **Direct outreach:** Personalize every message around the recipient's actual workflow. Ten relevant notes are better than a bulk list.
 
 ### Weeks 3–4: compound search and trust
 
@@ -139,6 +147,8 @@ Initial validation targets for the first 30 days:
 - 5 honest Store ratings or written reviews;
 - at least 3 users returning with a real use case or feature request; and
 - no sustained uninstall spike after a specific campaign.
+
+Track each activity in `marketing/CAMPAIGN_LOG.md` so qualitative feedback stays connected to installs, uninstalls, and product changes.
 
 ## Guardrails
 
